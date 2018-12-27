@@ -4,10 +4,12 @@
 
 ```
 Usage: PdfToPng
- --dpi N          : 解像度を指定します。 (default: 300)
- -d (--dir) VAL   : PDFがあるディレクトリを指定します。省略した場合は実行したところです。 (default: .)
- -h (--help)      : このヘルプを表示します。 (default: true)
- -r (--recursive) : 再帰的に実行します。 (default: false)
+ --dpi N             : 解像度を指定します。 (default: 300)
+ -d (--dir) VAL      : PDFがあるディレクトリを指定します。 (default: .)
+ -f (--filename) VAL : PNG化したいファイルをひとつだけ指定します。
+                       -d オプションと一緒に指定した場合こちらが優先されます。
+ -h (--help)         : このヘルプを表示します。 (default: true)
+ -r (--recursive)    : 再帰的に実行します。 (default: false)
 ```
 
 ## jarファイルの作成方法

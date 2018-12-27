@@ -4,17 +4,14 @@ import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.tools.imageio.ImageIOUtil;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
-import org.kohsuke.args4j.ExampleMode;
 import org.kohsuke.args4j.Option;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 
-import static java.lang.Thread.currentThread;
-
 public class PdfToPng {
-    @Option(name = "-d", aliases = "--dir", usage = "PDFがあるディレクトリを指定します。省略した場合は実行したところです。")
+    @Option(name = "-d", aliases = "--dir", usage = "PDFがあるディレクトリを指定します。")
     static String dirName = ".";
 
     @Option(name = "-r", aliases = "--recursive", usage = "再帰的に実行します。")
@@ -26,7 +23,11 @@ public class PdfToPng {
     @Option(name = "-h", aliases = "--help", usage = "このヘルプを表示します。")
     static boolean isHelp = false;
 
-    public static void main(String[] args) {
+    @Option(name = "-f", aliases = "--filename", usage = "PNG化したいファイルをひとつだけ指定します。\n" +
+            "-d オプションと一緒に指定した場合こちらが優先されます。")
+    static String filename = null;
+
+    public static void main(String[] args) throws IOException {
         PdfToPng app = new PdfToPng();
         CmdLineParser parser = new CmdLineParser(app);
         try {
@@ -36,25 +37,30 @@ public class PdfToPng {
             System.err.println(e);
         }
 
+        if (filename != null && !filename.toLowerCase().endsWith(".pdf")) {
+            System.err.println("ファイル指定:" + filename + "の誤り： ファイル名は PDF でなければなりません。");
+            System.exit(-1);
+        }
+
         if (isHelp) {
             System.err.println("Usage: " + new Object(){}.getClass().getEnclosingClass().getName());
             parser.printUsage(System.err);
             System.exit(-1);
         }
 
-        doPdfToPngRecursive(new File(dirName));
+        if (filename != null) {
+            pdfToPng(new File(filename));
+        } else {
+            doPdfToPngRecursive(new File(dirName));
+        }
     }
 
-    private static void doPdfToPngRecursive(File dir) {
+    private static void doPdfToPngRecursive(File dir) throws IOException {
         for (File file : dir.listFiles()) {
             if (file.isDirectory() && isRecursive) {
                 doPdfToPngRecursive(file);
             } else if (file.isFile() && file.getName().toLowerCase().endsWith(".pdf")) {
-                try {
-                    pdfToPng(file);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                pdfToPng(file);
             }
 
         }
