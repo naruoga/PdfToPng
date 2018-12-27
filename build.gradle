@@ -17,6 +17,7 @@ dependencies {
     compile 'args4j:args4j:2.33'
 }
 
+// from https://tech-lab.sios.jp/archives/9500
 jar {
     from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     manifest {
